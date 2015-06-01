@@ -1,0 +1,29 @@
+﻿Build started 01/06/2015 15:59:29.
+     1>Project "D:\Github\ProjetoPG\Projeto Base PG - OpenGL.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(363,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(364,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+     1>ClCompile:
+         D:\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ID:\Github\ProjetoPG\Dependencies\Include\ /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"D:\Github\ProjetoPG\Intermediary\Debug\\" /Fd"D:\Github\ProjetoPG\Intermediary\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Code\Camera.cpp Code\CurvasDeBezier.cpp Code\Main.cpp Code\Model.cpp Code\openGL_tutorial.cpp
+         openGL_tutorial.cpp
+         Model.cpp
+     1>d:\github\projetopg\code\model.cpp(9): error C2228: left of '.size' must have class/struct/union
+                 type is 'const char *'
+     1>d:\github\projetopg\code\model.cpp(15): error C2511: 'void Model::LoadObj(char *)' : overloaded member function not found in 'Model'
+                 d:\github\projetopg\code\model.h(26) : see declaration of 'Model'
+     1>d:\github\projetopg\code\model.cpp(20): error C2511: 'void Model::LoadNurb(char *)' : overloaded member function not found in 'Model'
+                 d:\github\projetopg\code\model.h(26) : see declaration of 'Model'
+         Main.cpp
+         CurvasDeBezier.cpp
+     1>d:\github\projetopg\code\curvasdebezier.cpp(43): warning C4996: '_sleep': This function or variable has been superceded by newer library or operating system functionality. Consider using Sleep instead. See online help for details.
+                 d:\microsoft visual studio 12.0\vc\include\stdlib.h(911) : see declaration of '_sleep'
+     1>d:\github\projetopg\code\curvasdebezier.cpp(52): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\github\projetopg\code\curvasdebezier.cpp(65): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\github\projetopg\code\curvasdebezier.cpp(72): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\github\projetopg\code\curvasdebezier.cpp(160): warning C4018: '<' : signed/unsigned mismatch
+         Camera.cpp
+         Generating Code...
+     1>Done Building Project "D:\Github\ProjetoPG\Projeto Base PG - OpenGL.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:02.97
