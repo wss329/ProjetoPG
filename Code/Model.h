@@ -13,7 +13,9 @@ struct Vector
 
 struct Face
 {
-	vector < int > vertices ;
+	vector < int > vertices;
+	vector < int > texturas;
+	vector < int > normais;
 };
 
 struct Texture
@@ -25,14 +27,15 @@ struct Texture
 class Model
 {
 public:
+	string nome;
 	bool hasTexture;
 	bool hasNormal;
 	vector<Vector> vertices;
 	vector<Face> faces;
 	vector<Vector> normais;
 	vector<Texture> textura;
-	Model( const char* filename);
-	void LoadObj(const char* filename);
-	void LoadNurb(const char* filename);
-	
+	Model( const char* path);
+	void LoadObj(const char* path);
+	void LoadNurb(const char* path);
+	void DrawModel();
 };
