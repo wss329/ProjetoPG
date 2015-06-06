@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <gl/glut.h>
+
 
 using namespace std;
 
@@ -37,5 +39,7 @@ public:
 	Model( const char* path);
 	void LoadObj(const char* path);
 	void LoadNurb(const char* path);
+	Vector getNormal(Vector p1, Vector p2, Vector p3);
 	void DrawModel();
+	void calcularNormal();
 };
