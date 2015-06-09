@@ -13,6 +13,7 @@ struct Vector
 	float z;
 };
 
+
 struct Face
 {
 	vector < int > vertices;
@@ -29,6 +30,10 @@ struct Texture
 class Model
 {
 public:
+	double scale = 1;
+	double rotate_x = 0;
+	double rotate_y = 0;
+	double rotate_z = 0;
 	string nome;
 	bool hasTexture;
 	bool hasNormal;
@@ -36,7 +41,7 @@ public:
 	vector<Face> faces;
 	vector<Vector> normais;
 	vector<Texture> textura;
-	Model( const char* path);
+	Model(const char* path);
 	void LoadObj(const char* path);
 	void LoadNurb(const char* path);
 	Vector getNormal(Vector p1, Vector p2, Vector p3);

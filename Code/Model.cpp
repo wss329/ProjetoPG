@@ -1,12 +1,22 @@
-// obj armazenado aqui por estruturas de dados, e funções de deslocamento etc...
-
 #include "Model.h"
 
 Model::Model(const char* path)
 {
 	hasTexture = false;
 	hasNormal = false;
-	LoadObj(path);
+	
+	string arquivo = path;
+	size_t posPonto = arquivo.find_last_of(".");
+	size_t posBarra = arquivo.find_last_of("/");
+	nome = arquivo.substr(posBarra +1);
+	string tipo = arquivo.substr(posPonto + 1);
+	
+	if (tipo.compare("obj") == 0)
+		LoadObj(path);
+	else if (tipo.compare("nurb") == 0)
+		LoadNurb(path);
+	else
+		printf("%s \n", "Model type not recognised");
 }
 
 void Model::LoadObj(const char* path)
@@ -28,6 +38,7 @@ void Model::LoadObj(const char* path)
 		{
 			Vector novaVertice;
 			fscanf(file, "%f %f %f\n", &novaVertice.x, &novaVertice.y, &novaVertice.z);
+			printf("%f %f %f\n", novaVertice.x, novaVertice.y, novaVertice.z);
 			vertices.push_back(novaVertice);
 		}
 		
@@ -46,16 +57,25 @@ void Model::LoadObj(const char* path)
 			fscanf(file, "%f %f %f\n", &novaNormal.x, &novaNormal.y, &novaNormal.z);
 			normais.push_back(novaNormal);
 		}
-
+		else if (strcmp(line, "#") == 0)
+		{
+			// é comentário ignorar a linha
+			//#vt e no f ele lê vt realmente não entendo isso...
+		}
 		else if (strcmp(line, "f") == 0)
 		{
 			//procurar saber como determinar fim da linha com fscan e também o esquema de
 			//2 vectors para cada escrito no tutorial
-			float vert, text, norm;
+			int vert, text, norm;
 			if (!hasTexture && !hasNormal)
 			{
 				Face novaface;
-				while (fscanf(file, "%f", &vert)){
+				int i = 1;
+				while (i){
+					if (i == EOF)
+						break;
+					i = fscanf(file, "%i", &vert);
+					if (i!=0)
 					novaface.vertices.push_back(vert);
 				}
 				faces.push_back(novaface);
@@ -64,9 +84,16 @@ void Model::LoadObj(const char* path)
 			else if (hasTexture && !hasNormal)
 			{
 				Face novaface;
-				while (fscanf(file, "%f/%f", &vert, &text)){
+				int i = 1;
+				while (i>=1){
+					if (i == EOF)
+						break;
+					i = fscanf(file, "%i/%i/", &vert, &text);
+					if (i != 0)
+					{
 					novaface.vertices.push_back(vert);
 					novaface.texturas.push_back(text);
+					}
 				}
 				faces.push_back(novaface);
 				//ler no formato f v/vt/ v/vt/ v/vt/ ... calcular normais e salva-las
@@ -75,10 +102,17 @@ void Model::LoadObj(const char* path)
 			else if (hasTexture && hasNormal)
 			{
 				Face novaface;
-				while (fscanf(file, "%f/%f/%f", &vert, &text, &norm)){
-					novaface.vertices.push_back(vert);
-					novaface.texturas.push_back(text);
-					novaface.normais.push_back(norm);
+				int i = 1;
+				while (i>=1){
+					if (i == EOF)
+						break;
+					i = fscanf(file, "%i/%i/%i", &vert, &text, &norm);
+					if (i != 0)
+					{
+						novaface.vertices.push_back(vert);
+						novaface.texturas.push_back(text);
+						novaface.normais.push_back(norm);
+					}
 				}
 				faces.push_back(novaface);
 				//ler e salvar no formato f v/vt/vn v/vt/vn v/vt/vn ...
@@ -86,18 +120,24 @@ void Model::LoadObj(const char* path)
 			else if (!hasTexture && hasNormal)
 			{
 				Face novaface;
-				while (fscanf(file, "%f//%f", &vert, &norm)){
-					novaface.vertices.push_back(vert);
-
-					novaface.normais.push_back(norm);
+				int i = 1;
+				while (i >= 1){
+					if (i == EOF)
+						break;
+					i = fscanf(file, "%i//%i", &vert, &norm);
+					if (i != 0)
+					{
+						novaface.vertices.push_back(vert);
+						novaface.normais.push_back(norm);
+					}
 				}
 				faces.push_back(novaface);
 				//ler e salvar no formato f v//vn v//vn v/t/vn ...
 			}
 		}
+	}
 		if (!hasNormal)
 		calcularNormal();
-	}
 		
 }
 
@@ -108,18 +148,26 @@ void Model::LoadNurb(const char* filename)
 
 void Model::DrawModel()
 {
+	glPushMatrix();
+
+	// Transformações
+	glRotatef(rotate_x, 1.0, 0.0, 0.0);
+	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+	glRotatef(rotate_z, 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
+
+
 	if (!hasNormal)
 	{
-		
-		for (int i = 0; i < faces.size(); i++)
+		for (size_t i = 0; i < faces.size(); i++)
 		{
 			Face face = faces[i];
-			Vector n = normais[i + 1];
+			Vector n = normais[i];
 			glNormal3f(n.x, n.y, n.z);
 			glBegin(GL_POLYGON);
-			for (int i = 0; i < face.vertices.size(); i++)
+			for (size_t t = 0; t < face.vertices.size(); t++)
 			{
-				Vector v = vertices[face.vertices[i] + 1];
+				Vector v = vertices[face.vertices[t] - 1];
 				glVertex3f(v.x, v.y, v.z);
 			}
 			glEnd();
@@ -127,40 +175,39 @@ void Model::DrawModel()
 	
 	}
 	else
-	
+	// se tem normal
 	{
-		for (int i = 0; i < faces.size(); i++)
+		for (size_t i = 0; i < faces.size(); i++)
 		{
 			Face face = faces[i];
-			for (int t = 0; t < face.normais.size(); t++)
+			for (size_t t = 0; t < face.normais.size(); t++)
 			{
-				Vector n = normais[face.normais[t] + 1];
+				Vector n = normais[face.normais[t] - 1];
 				glNormal3f(n.x, n.y, n.z);
 			}
 			glBegin(GL_POLYGON);
-			for (int i = 0; i < face.vertices.size(); i++)
+			for (size_t t = 0; t < face.vertices.size(); t++)
 			{
-				Vector v = vertices[face.vertices[i] + 1];
+				Vector v = vertices[face.vertices[t] - 1];
 				glVertex3f(v.x, v.y, v.z);
 			}
 			glEnd();
 		}
 	}
-
+	glPopMatrix();
 }
 
 void Model::calcularNormal()
 {
-	for (int i = 0; i < faces.size(); i++)
+	for (size_t i = 0; i < faces.size(); i++)
 	{
-		Vector p1 = vertices[faces[i].vertices[1] + 1];
-		Vector p2 = vertices[faces[i].vertices[2] + 1];
-		Vector p3 = vertices[faces[i].vertices[3] + 1];
+		Vector p1 = vertices[faces[i].vertices[0] - 1];
+		Vector p2 = vertices[faces[i].vertices[1] - 1];
+		Vector p3 = vertices[faces[i].vertices[2] - 1];
 
-		normais[i+1] = getNormal(p1, p2, p3);
+		normais.push_back( getNormal(p1, p2, p3));// tava normais[i+1] pensar depois
 		//calcular normal para cada face
 	}
-
 }
 
 Vector Model::getNormal(Vector p1,Vector p2, Vector p3)
