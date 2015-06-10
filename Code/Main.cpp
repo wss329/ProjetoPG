@@ -2,9 +2,14 @@
 #include <stdarg.h>
 #include <math.h>
 #include "Model.h"
+#include "Light.h"
 #define GL_GLEXT_PROTOTYPES
 #include <GL/glut.h>
 
+GLfloat wWidth = 1366.0;
+GLfloat wHeight = 768.0;
+
+// ---------------Global Vars Start ---------
 void loadModels();
 void display();
 void specialKeys();
@@ -12,16 +17,26 @@ void drawRetangle();
 void drawGrid();
 void selectNext();
 void selectLast();
+Camera cameraPrincipal = Camera();
 
 vector<Model> objs;
 int modelIndex = 0;
 double rotate_y = 0;
 double rotate_x = 0;
 
-void display(){
+Light L = Light();
 
+// -------------Global Vars End ------------
+
+void display(){
 	//  Clear screen and Z-buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//cameraPrincipal.setView();
+	//glMatrixMode(GL_PROJECTION);
+	//glViewport(wWidth / 20, 0, wWidth - wWidth / 20, wHeight);
+	//glLoadIdentity();
+	//gluPerspective(45, wWidth / (wHeight), 0.1f, 3000.0f);
 
 	// Reset transformations
 	glLoadIdentity();
@@ -30,14 +45,22 @@ void display(){
 	glRotatef(rotate_x, 1.0, 0.0, 0.0);
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
 	glScalef(0.2, 0.2, 0.2);
+	glPushMatrix();
+	GLfloat position[] = { L.pontos.x, L.pontos.y, L.pontos.z - 1, 1.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glPopMatrix();
 	//drawRetangle();
+	drawGrid();
+
 
 	for (size_t i = 0; i < objs.size(); i++)
 	{
 		objs[i].DrawModel();
 	}
-	
-	drawGrid();
+
+
 	// Other Transformations
 	//glScalef( 2.0, 2.0, 2.0 );          // Not included
 
@@ -51,8 +74,7 @@ void LoadModels()
 {
 	Model m = Model("Resources/Triangles/venus.obj");
 	objs.push_back(m);
-	m = Model("Resources/Triangles/venus.obj");
-	objs.push_back(m);
+	
 	// adiciona os modelos no vector
 }
 

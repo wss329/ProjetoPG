@@ -2,6 +2,8 @@
 #include <math.h>
 #include <gl/glut.h>
 
+using namespace std;
+
 class Camera
 {
 public:
@@ -14,7 +16,7 @@ public:
 	void rotateLoc(float deg, float x, float y, float z);
 	void rotateGlob(float deg, float x, float y, float z);
 	void do_x_rotation(float deg);
-	void do_y_rotation(float deg);
+	void do_y_rotation(float deg); 
 	void do_z_rotation(float deg);
 };
 

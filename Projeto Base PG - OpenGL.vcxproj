@@ -12,15 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\Camera.cpp" />
-    <ClCompile Include="Code\CurvasDeBezier.cpp" />
+    <ClCompile Include="Code\Light.cpp" />
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\Model.cpp" />
-    <ClCompile Include="Code\openGL_tutorial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\Camera.h" />
+    <ClInclude Include="Code\Light.h" />
     <ClInclude Include="Code\Model.h" />
-    <ClInclude Include="Code\openGL_tutorial.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

@@ -2,6 +2,8 @@
 #include <vector>
 #include <math.h>
 #include <gl/glut.h>
+#include "Camera.h"
+
 
 
 using namespace std;
@@ -37,6 +39,7 @@ public:
 	string nome;
 	bool hasTexture;
 	bool hasNormal;
+	Camera cameraPrincipal;
 	vector<Vector> vertices;
 	vector<Face> faces;
 	vector<Vector> normais;
