@@ -188,61 +188,35 @@ void handleKeypress(unsigned char key, int x, int y)
 	case 45://-
 		objs[modelIndex].scale -= 0.01;
 		break;
-
-	//Arthur RETARDADO LEMBRA QUE e em coordenadas de mundo e n do obj
 	case 49://1
+		objs[modelIndex].translate_x -= 0.02;
 		break;
-	
+
 	case 50://2
+		objs[modelIndex].translate_x += 0.02;
 		break;
-	
+
 	case 51://3
+		objs[modelIndex].translate_y -= 0.02;
 		break;
-	
+
 	case 52://4
+		objs[modelIndex].translate_y += 0.02;
 		break;
-	
+
 	case 53://5
+		objs[modelIndex].translate_z -= 0.02;
 		break;
-	
+
 	case 54://6
+		objs[modelIndex].translate_z += 0.02;
 		break;
-	
+
 	case 55://7 gira o objeto selecionado em relação ao eixo X
 		objs[modelIndex].rotate_x += 5;
 		break;
-	
-	case 56://8 gira o objeto selecionado em relação ao eixo Y
-		objs[modelIndex].rotate_y += 5;
-		break;
-	
-	case 57://9 gira o objeto selecionado em relação ao eixo Z
-		objs[modelIndex].rotate_z += 5;
-		break;
-
-	case 27: // ESC
-		exit(0);
-		break;
-
-	case 44://,
-		selectLast();
-		break;
-
-	case 46://.
-		selectNext();
-		break;
-
-	case 60://<
-		selectLast();
-		break;
-
-	case 62://>
-		selectNext();
-		break;
-
 	}
-
-	glutPostRedisplay();
+		glutPostRedisplay();
 
 }
 

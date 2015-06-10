@@ -36,6 +36,9 @@ public:
 	double rotate_x = 0;
 	double rotate_y = 0;
 	double rotate_z = 0;
+	double translate_x = 0;
+	double translate_y = 0;
+	double translate_z = 0;
 	string nome;
 	bool hasTexture;
 	bool hasNormal;

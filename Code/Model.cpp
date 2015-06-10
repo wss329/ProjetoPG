@@ -151,6 +151,7 @@ void Model::DrawModel()
 	glPushMatrix();
 
 	// Transformações
+	glTranslatef(translate_x, translate_y, translate_z);
 	glRotatef(rotate_x, 1.0, 0.0, 0.0);
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
 	glRotatef(rotate_z, 0.0, 0.0, 1.0);
