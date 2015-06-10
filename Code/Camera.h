@@ -2,30 +2,19 @@
 #include <math.h>
 #include <gl/glut.h>
 
-using namespace std;
-
-struct Vector{
-	float x;
-	float y;
-	float z;
-	float w;
-};
-
 class Camera
 {
 public:
 
-	float x_coordinate;
-	float y_coordinate;
-	float z_coordinate;
-	Vector cameraPosition;
-
-	void translateX(float amount);
-	void translateY(float amount);
-	void translateZ(float amount);
-	void rotateX(float amount);
-	void rotateY(float amount);
-	void rotateZ(float amount);
+	GLfloat extParameters[16]; // 4x4 matrix of ext. parameters
 	Camera();
+	void setView();
+	void translateLoc(float x, float y, float z);
+	void translateGlob(float x, float y, float z);
+	void rotateLoc(float deg, float x, float y, float z);
+	void rotateGlob(float deg, float x, float y, float z);
+	void do_x_rotation(float deg);
+	void do_y_rotation(float deg);
+	void do_z_rotation(float deg);
 };
 
