@@ -2,9 +2,9 @@
 
 Light::Light(){
 	on = false;
-	pontos.x = 0;
-	pontos.y = 0;
-	pontos.z = 0;
+	pontos.x = 1;
+	pontos.y = 1;
+	pontos.z = 1;
 
 }
 

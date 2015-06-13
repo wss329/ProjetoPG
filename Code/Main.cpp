@@ -24,7 +24,8 @@ int modelIndex = 0;
 double rotate_y = 0;
 double rotate_x = 0;
 
-Light L = Light();
+Light L1 = Light();
+Light L2 = Light();
 
 // -------------Global Vars End ------------
 
@@ -45,21 +46,13 @@ void display(){
 	glRotatef(rotate_x, 1.0, 0.0, 0.0);
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
 	glScalef(0.2, 0.2, 0.2);
-	glPushMatrix();
-	GLfloat position[] = { L.pontos.x, L.pontos.y, L.pontos.z - 1, 1.0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glPopMatrix();
-	//drawRetangle();
+
+
 	drawGrid();
-
-
 	for (size_t i = 0; i < objs.size(); i++)
 	{
 		objs[i].DrawModel();
 	}
-
 
 	// Other Transformations
 	//glScalef( 2.0, 2.0, 2.0 );          // Not included
@@ -70,69 +63,28 @@ void display(){
 
 }
 
+void DisplayLight()
+{
+	glPushMatrix();
+	GLfloat position[] = { L1.pontos.x, L1.pontos.y, L1.pontos.z - 1, 1.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glPopMatrix();
+	
+	glPushMatrix();
+	GLfloat position[] = { L2.pontos.x, L2.pontos.y, L2.pontos.z - 1, 1.0 };
+	glLightfv(GL_LIGHT1, GL_POSITION, position);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
+	glPopMatrix();
+}
+
 void LoadModels()
 {
 	Model m = Model("Resources/Triangles/venus.obj");
 	objs.push_back(m);
-	
 	// adiciona os modelos no vector
-}
-
-void drawRetangle()
-{
-	glBegin(GL_POLYGON);
-
-	glColor3f(1.0, 0.0, 0.0);     glVertex3f(0.5, -0.5, -0.5);      // P1 is red
-	glColor3f(0.0, 1.0, 0.0);     glVertex3f(0.5, 0.5, -0.5);      // P2 is green
-	glColor3f(0.0, 0.0, 1.0);     glVertex3f(-0.5, 0.5, -0.5);      // P3 is blue
-	glColor3f(1.0, 0.0, 1.0);     glVertex3f(-0.5, -0.5, -0.5);      // P4 is purple
-
-	glEnd();
-
-	// White side - BACK
-	glBegin(GL_POLYGON);
-	glColor3f(1.0, 1.0, 1.0);
-	glVertex3f(0.5, -0.5, 0.5);
-	glVertex3f(0.5, 0.5, 0.5);
-	glVertex3f(-0.5, 0.5, 0.5);
-	glVertex3f(-0.5, -0.5, 0.5);
-	glEnd();
-
-	// Purple side - RIGHT
-	glBegin(GL_POLYGON);
-	//glColor3f(1.0, 0.0, 1.0);
-	glVertex3f(0.5, -0.5, -0.5);
-	glVertex3f(0.5, 0.5, -0.5);
-	glVertex3f(0.5, 0.5, 0.5);
-	glVertex3f(0.5, -0.5, 0.5);
-	glEnd();
-
-	// Green side - LEFT
-	glBegin(GL_POLYGON);
-	glColor3f(0.0, 1.0, 0.0);
-	glVertex3f(-0.5, -0.5, 0.5);
-	glVertex3f(-0.5, 0.5, 0.5);
-	glVertex3f(-0.5, 0.5, -0.5);
-	glVertex3f(-0.5, -0.5, -0.5);
-	glEnd();
-
-	// Blue side - TOP
-	glBegin(GL_POLYGON);
-	glColor3f(0.0, 0.0, 1.0);
-	glVertex3f(0.5, 0.5, 0.5);
-	glVertex3f(0.5, 0.5, -0.5);
-	glVertex3f(-0.5, 0.5, -0.5);
-	glVertex3f(-0.5, 0.5, 0.5);
-	glEnd();
-
-	// Red side - BOTTOM
-	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex3f(0.5, -0.5, -0.5);
-	glVertex3f(0.5, -0.5, 0.5);
-	glVertex3f(-0.5, -0.5, 0.5);
-	glVertex3f(-0.5, -0.5, -0.5);
-	glEnd();
 }
 
 void drawGrid() // Draws a grid...
@@ -215,9 +167,35 @@ void handleKeypress(unsigned char key, int x, int y)
 	case 55://7 gira o objeto selecionado em relação ao eixo X
 		objs[modelIndex].rotate_x += 5;
 		break;
+	case 56://8 gira o objeto selecionado em relação ao eixo Y
+		objs[modelIndex].rotate_y += 5;
+		break;
+
+	case 57://9 gira o objeto selecionado em relação ao eixo Z
+		objs[modelIndex].rotate_z += 5;
+		break;
+
+	case 27: // ESC
+		exit(0);
+		break;
+
+	case 44://,
+		selectLast();
+		break;
+
+	case 46://.
+		selectNext();
+		break;
+
+	case 60://<
+		selectLast();
+		break;
+
+	case 62://>
+		selectNext();
+		break;
 	}
 		glutPostRedisplay();
-
 }
 
 void selectLast()
