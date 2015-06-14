@@ -38,7 +38,6 @@ void Model::LoadObj(const char* path)
 		{
 			Vector novaVertice;
 			fscanf(file, "%f %f %f\n", &novaVertice.x, &novaVertice.y, &novaVertice.z);
-			printf("%f %f %f\n", novaVertice.x, novaVertice.y, novaVertice.z);
 			vertices.push_back(novaVertice);
 		}
 		
@@ -157,7 +156,6 @@ void Model::DrawModel()
 	glRotatef(rotate_z, 0.0, 0.0, 1.0);
 	glScalef(scale, scale, scale);
 
-
 	if (!hasNormal)
 	{
 		for (size_t i = 0; i < faces.size(); i++)
@@ -176,22 +174,24 @@ void Model::DrawModel()
 	
 	}
 	else
-	// se tem normal
 	{
 		for (size_t i = 0; i < faces.size(); i++)
 		{
 			Face face = faces[i];
+			glBegin(GL_POLYGON);
+
 			for (size_t t = 0; t < face.normais.size(); t++)
 			{
 				Vector n = normais[face.normais[t] - 1];
 				glNormal3f(n.x, n.y, n.z);
-			}
-			glBegin(GL_POLYGON);
-			for (size_t t = 0; t < face.vertices.size(); t++)
-			{
 				Vector v = vertices[face.vertices[t] - 1];
 				glVertex3f(v.x, v.y, v.z);
 			}
+			//for (size_t t = 0; t < face.vertices.size(); t++)
+			//{
+			//	Vector v = vertices[face.vertices[t] - 1];
+			//	glVertex3f(v.x, v.y, v.z);
+			//}
 			glEnd();
 		}
 	}

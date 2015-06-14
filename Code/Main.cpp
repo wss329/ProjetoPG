@@ -6,10 +6,8 @@
 #define GL_GLEXT_PROTOTYPES
 #include <GL/glut.h>
 
-GLfloat wWidth = 1366.0;
-GLfloat wHeight = 768.0;
-
 // ---------------Global Vars Start ---------
+void DisplayLights();
 void loadModels();
 void display();
 void specialKeys();
@@ -17,19 +15,22 @@ void drawRetangle();
 void drawGrid();
 void selectNext();
 void selectLast();
+void translateModel(int selector, double deslocamento);
 Camera cameraPrincipal = Camera();
-
 vector<Model> objs;
 int modelIndex = 0;
-double rotate_y = 0;
-double rotate_x = 0;
-
+double tempRotate_y = 0;
+double tempRotate_x = 0;
+const double translateQtd = 0.02;
 Light L1 = Light();
 Light L2 = Light();
+int lightIndex = 0;
+bool lightSelected = 0;
 
 // -------------Global Vars End ------------
 
 void display(){
+
 	//  Clear screen and Z-buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -39,31 +40,29 @@ void display(){
 	//glLoadIdentity();
 	//gluPerspective(45, wWidth / (wHeight), 0.1f, 3000.0f);
 
+
+	// ------------------------- Temp----------------------------------------
 	// Reset transformations
 	glLoadIdentity();
-
 	// Rotate when user changes rotate_x and rotate_y
-	glRotatef(rotate_x, 1.0, 0.0, 0.0);
-	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+	glRotatef(tempRotate_x, 1.0, 0.0, 0.0);
+	glRotatef(tempRotate_y, 0.0, 1.0, 0.0);
 	glScalef(0.2, 0.2, 0.2);
+	// ------------------------- Temp----------------------------------------
 
-
-	drawGrid();
+	DisplayLights();
 	for (size_t i = 0; i < objs.size(); i++)
 	{
 		objs[i].DrawModel();
 	}
-
-	// Other Transformations
-	//glScalef( 2.0, 2.0, 2.0 );          // Not included
-
+	drawGrid();
 
 	glFlush();
 	glutSwapBuffers();
 
 }
 
-void DisplayLight()
+void DisplayLights()
 {
 	glPushMatrix();
 	GLfloat position[] = { L1.pontos.x, L1.pontos.y, L1.pontos.z - 1, 1.0 };
@@ -73,8 +72,10 @@ void DisplayLight()
 	glPopMatrix();
 	
 	glPushMatrix();
-	GLfloat position[] = { L2.pontos.x, L2.pontos.y, L2.pontos.z - 1, 1.0 };
-	glLightfv(GL_LIGHT1, GL_POSITION, position);
+	GLfloat position2[] = { L2.pontos.x+ 5, L2.pontos.y, L2.pontos.z - 1, 1.0 };
+	GLfloat color[] = { 0.89, 0, 0.87 };
+	glLightfv(GL_LIGHT1, GL_POSITION, position2);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, color);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT1);
 	glPopMatrix();
@@ -83,8 +84,9 @@ void DisplayLight()
 void LoadModels()
 {
 	Model m = Model("Resources/Triangles/venus.obj");
+	//objs.push_back(m);
+	m = Model("Resources/PolygonsWithNormals/camel.obj");
 	objs.push_back(m);
-	// adiciona os modelos no vector
 }
 
 void drawGrid() // Draws a grid...
@@ -113,17 +115,17 @@ void specialKeys(int key, int x, int y) {
 
 	//  Right arrow - increase rotation by 5 degree
 	if (key == GLUT_KEY_RIGHT)
-		rotate_y += 5;
+		tempRotate_y += 5;
 
 	//  Left arrow - decrease rotation by 5 degree
 	else if (key == GLUT_KEY_LEFT)
-		rotate_y -= 5;
+		tempRotate_y -= 5;
 
 	else if (key == GLUT_KEY_UP)
-		rotate_x += 5;
+		tempRotate_x += 5;
 
 	else if (key == GLUT_KEY_DOWN)
-		rotate_x -= 5;
+		tempRotate_x -= 5;
 
 	//  Request display update
 	glutPostRedisplay();
@@ -133,46 +135,51 @@ void specialKeys(int key, int x, int y) {
 void handleKeypress(unsigned char key, int x, int y)
 {
 	switch (key){
-
+		//translateQtd
 	case 43://+
-		objs[modelIndex].scale += 0.01;
+		if (!lightSelected)
+			objs[modelIndex].scale += 0.01;
 		break;
 	case 45://-
-		objs[modelIndex].scale -= 0.01;
+		if (!lightSelected)
+			objs[modelIndex].scale -= 0.01;
 		break;
 	case 49://1
-		objs[modelIndex].translate_x -= 0.02;
+		translateModel(0, -translateQtd);
 		break;
 
 	case 50://2
-		objs[modelIndex].translate_x += 0.02;
+		translateModel(0, +translateQtd);
 		break;
 
 	case 51://3
-		objs[modelIndex].translate_y -= 0.02;
+		translateModel(1, -translateQtd);
 		break;
 
 	case 52://4
-		objs[modelIndex].translate_y += 0.02;
+		translateModel(1, +translateQtd);
 		break;
 
 	case 53://5
-		objs[modelIndex].translate_z -= 0.02;
+		translateModel(2, -translateQtd);
 		break;
 
 	case 54://6
-		objs[modelIndex].translate_z += 0.02;
+		translateModel(2, +translateQtd);
 		break;
 
 	case 55://7 gira o objeto selecionado em relação ao eixo X
-		objs[modelIndex].rotate_x += 5;
+		if (!lightSelected)
+			objs[modelIndex].rotate_x += 5;
 		break;
 	case 56://8 gira o objeto selecionado em relação ao eixo Y
-		objs[modelIndex].rotate_y += 5;
+		if (!lightSelected)
+			objs[modelIndex].rotate_y += 5;
 		break;
 
 	case 57://9 gira o objeto selecionado em relação ao eixo Z
-		objs[modelIndex].rotate_z += 5;
+		if (!lightSelected)
+			objs[modelIndex].rotate_z += 5;
 		break;
 
 	case 27: // ESC
@@ -198,25 +205,128 @@ void handleKeypress(unsigned char key, int x, int y)
 		glutPostRedisplay();
 }
 
+void translateModel(int selector, double deslocamento)
+{
+	//select: x = 0; y = 1 ; z=2;
+	const double translateLightBoost = 1;
+	if (selector == 0)
+	{
+		if (!lightSelected)
+		{
+			objs[modelIndex].translate_x += deslocamento;
+		}
+		else{
+			if (lightIndex == 0)
+			{
+				L1.translate(deslocamento +translateLightBoost, 0, 0);
+			}
+			else{
+				L2.translate(deslocamento +translateLightBoost, 0, 0);
+			}
+		}
+
+	}
+	else if (selector == 1){
+		if (!lightSelected)
+		{
+			objs[modelIndex].translate_y += deslocamento;
+		}
+		else{
+			if (lightIndex == 0)
+			{
+				L1.translate(0, deslocamento + translateLightBoost, 0);
+			}
+			else{
+				L2.translate(0, deslocamento + translateLightBoost, 0);
+			}
+		}
+	}
+	else if(selector == 2){
+		if (!lightSelected)
+		{
+			objs[modelIndex].translate_z += deslocamento;
+		}
+		else{
+			if (lightIndex == 0)
+			{
+				L1.translate(0, 0, deslocamento + translateLightBoost);
+			}
+			else{
+				L2.translate(0, 0, deslocamento + translateLightBoost);
+			}
+		}
+	}
+}
+
 void selectLast()
 {
-	// implementar a lógica  de primeiro obj ultima fonte de luz etc
-	if (modelIndex > 0)
+	if (modelIndex > 0 && !lightSelected)
 	{
+		//caso 0
 		modelIndex = modelIndex - 1;
 		printf("Selected: %s %d \n", objs[modelIndex].nome.c_str(), modelIndex);
 	}
-//‘,’ ou ‘<’: seleciona o modelo anterior (ao chegar no primeiro modelo, passa para a última fonte de luz)
+	else
+	{
+		if (!lightSelected)
+		{
+			//caso 1
+			lightSelected = 1;
+			lightIndex = 1;
+			printf("Selected: %s %d \n", "Light ", lightIndex);
+		}
+		else
+		{
+			if (lightIndex == 1)
+			{
+				//caso 2
+				lightIndex = 0;
+				printf("Selected: %s %d \n", "Light ", lightIndex);
+			}
+			else
+			{
+				//caso 3
+				lightSelected = 0;
+				modelIndex = objs.size() - 1;
+				printf("Selected: %s %d \n", objs[modelIndex].nome.c_str(), modelIndex);
+			}
+		}
+	}
 }
 
 void selectNext()
 {
-	if (modelIndex < objs.size()-1)
+	if (modelIndex < objs.size()-1 && !lightSelected)
 	{
 		modelIndex = modelIndex + 1;
 		printf("Selected: %s %d \n", objs[modelIndex].nome.c_str(), modelIndex);
 	}
-//‘.’ ou ‘>’: seleciona o modelo seguinte (ao chegar no último modelo, passa para a primeira fonte de luz)
+	else
+	{
+		if (!lightSelected)
+		{
+			//caso 4
+			lightSelected = 1;
+			lightIndex = 0;
+			printf("Selected: %s %d \n", "Light ", lightIndex);
+		}
+		else
+		{
+			if (lightIndex == 0)
+			{
+				//caso 5
+				lightIndex = 1;
+				printf("Selected: %s %d \n", "Light ", lightIndex);
+			}
+			else
+			{
+				//caso 6
+				lightSelected = 0;
+				modelIndex = 0;
+				printf("Selected: %s %d \n", objs[modelIndex].nome.c_str(), modelIndex);
+			}
+		}
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -244,67 +354,3 @@ int main(int argc, char* argv[]){
 	//  Return to OS
 	return 0;
 }
-
-
-//#include "Model.h"
-//#include "openGL_tutorial.h"
-//#include <iostream>
-//#include <vector>
-//
-//
-//const int WINDOW_W = 750;
-//const int WINDOW_H = 750;
-//
-//using namespace std;
-//
-//vector <Model> objetos;
-//
-
-//
-//
-//void display()
-//{
-//	glMatrixMode(GL_MODELVIEW);
-//	
-//	glClear(GL_COLOR_BUFFER_BIT);	
-//	glLoadIdentity();
-//
-//	/*for (size_t i = 0; i < objetos.size(); i++)
-//	{
-//		objetos[i].DrawModel();
-//	}*/
-//
-//	drawGrid();
-//
-//	glFlush();
-//}
-//
-//
-//void reshape(int w, int h)
-//{
-//	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-//	glMatrixMode(GL_PROJECTION);
-//	glLoadIdentity();
-//	glOrtho(0.0f, WINDOW_W, WINDOW_H, 0.0f, -5.0, 5.0);
-//	glMatrixMode(GL_MODELVIEW);
-//	glLoadIdentity();
-//}
-//
-//int main(int argc, char ** argv)
-//{
-//	glutInit(&argc, argv);
-//	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-//	glutInitWindowPosition(0, 0); // a janela irá iniciar to topo esquerdo
-//	glutInitWindowSize(WINDOW_W, WINDOW_H);
-//	glutCreateWindow("Projeto PG");
-//	//LoadModels();
-//	glEnable(GL_DEPTH_TEST);
-//	glutDisplayFunc(display);
-//	glutReshapeFunc(reshape);
-//	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//	
-//	glutKeyboardFunc(handleKeypress);
-//	
-//	glutMainLoop();
-//	
-//}
