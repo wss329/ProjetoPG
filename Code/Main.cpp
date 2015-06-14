@@ -83,9 +83,9 @@ void DisplayLights()
 
 void LoadModels()
 {
-	Model m = Model("Resources/Triangles/venus.obj");
+	//m = Model("Resources/Triangles/venus.obj");
 	//objs.push_back(m);
-	m = Model("Resources/PolygonsWithNormals/camel.obj");
+	Model m = Model("Resources/PolygonsWithNormals/camel.obj");
 	objs.push_back(m);
 }
 
