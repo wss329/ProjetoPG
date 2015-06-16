@@ -133,10 +133,11 @@ void printw(float x, float y, float z, char* format, ...)
 
 	//  Write formatted output using a pointer to the list of arguments
 	vsprintf_s(text, len, format, args);
-
 	//  End using variable argument list 
 	va_end(args);
 	//  Specify the raster position for pixel operations.,
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0,1.0,1.0);
 	glRasterPos3f(x, y, z);
 	//  Draw the characters one by one
 	for (i = 0; text[i] != '\0'; i++)
