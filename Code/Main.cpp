@@ -11,7 +11,6 @@ void DisplayLights();
 void loadModels();
 void display();
 void specialKeys();
-void drawRetangle();
 void drawGrid();
 void selectNext();
 void selectLast();
