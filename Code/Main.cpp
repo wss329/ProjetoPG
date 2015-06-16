@@ -216,7 +216,15 @@ void handleKeypress(unsigned char key, int x, int y)
 		if (!lightSelected)
 			objs[modelIndex].scale += 0.01;
 		break;
+	case 61://=
+		if (!lightSelected)
+			objs[modelIndex].scale += 0.01;
+		break;
 	case 45://-
+		if (!lightSelected)
+			objs[modelIndex].scale -= 0.01;
+		break;
+	case 95://_
 		if (!lightSelected)
 			objs[modelIndex].scale -= 0.01;
 		break;
