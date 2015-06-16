@@ -26,6 +26,10 @@ Light L1 = Light();
 Light L2 = Light();
 int lightIndex = 0;
 bool lightSelected = 0;
+double mousepos_x = 0;
+double mousepos_y = 0;
+GLfloat wWidth = 1366.0;
+GLfloat wHeight = 768.0;
 
 void idle(void);
 int frameCount = 0;
@@ -45,22 +49,14 @@ void display(){
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//cameraPrincipal.setView();
-	//glMatrixMode(GL_PROJECTION);
-	//glViewport(wWidth / 20, 0, wWidth - wWidth / 20, wHeight);
-	//glLoadIdentity();
-	//gluPerspective(45, wWidth / (wHeight), 0.1f, 3000.0f);
-
-
-	// ------------------------- Temp----------------------------------------
-	// Reset transformations
+	//--------------------------Camera Setup --------------------------------
+	glMatrixMode(GL_PROJECTION);
+	glViewport(0, 0, wWidth / 2, wHeight);
 	glLoadIdentity();
-	// Rotate when user changes rotate_x and rotate_y
-	glRotatef(tempRotate_x, 1.0, 0.0, 0.0);
-	glRotatef(tempRotate_y, 0.0, 1.0, 0.0);
-	glScalef(0.2, 0.2, 0.2);
-	// ------------------------- Temp----------------------------------------
-
+	gluPerspective(45, wWidth / (wHeight * 2), 0.1f, 3000.0f);
+	cameraPrincipal.setView();
+	//-----------------------------------------------------------------------
+	
 	DisplayLights();
 	for (size_t i = 0; i < objs.size(); i++)
 	{
@@ -68,9 +64,10 @@ void display(){
 	}
 	//drawGrid();
 	drawFPS();
+
 	glFlush();
 	glutSwapBuffers();
-
+	glutPostRedisplay();
 }
 
 void drawFPS()
@@ -112,6 +109,12 @@ void LoadModels()
 
 void printw(float x, float y, float z, char* format, ...)
 {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
 	va_list args;	//  Variable argument list
 	int len;		//	String length
 	int i;			//  Iterator
@@ -139,6 +142,10 @@ void printw(float x, float y, float z, char* format, ...)
 		glutBitmapCharacter(font_style, text[i]);
 	//  Free the allocated memory for the string
 	free(text);
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 }	
 
 
@@ -199,27 +206,6 @@ void drawGrid() // Draws a grid...
 	glPopMatrix();
 }
 
-void specialKeys(int key, int x, int y) {
-
-	//  Right arrow - increase rotation by 5 degree
-	if (key == GLUT_KEY_RIGHT)
-		tempRotate_y += 5;
-
-	//  Left arrow - decrease rotation by 5 degree
-	else if (key == GLUT_KEY_LEFT)
-		tempRotate_y -= 5;
-
-	else if (key == GLUT_KEY_UP)
-		tempRotate_x += 5;
-
-	else if (key == GLUT_KEY_DOWN)
-		tempRotate_x -= 5;
-
-	//  Request display update
-	glutPostRedisplay();
-
-}
-
 void handleKeypress(unsigned char key, int x, int y)
 {
 	switch (key){
@@ -272,6 +258,22 @@ void handleKeypress(unsigned char key, int x, int y)
 
 	case 27: // ESC
 		exit(0);
+		break;
+
+	case 119: //w
+		cameraPrincipal.translateGlob(0, 0, 0.01);
+		break;
+
+	case 115: //s
+		cameraPrincipal.translateGlob(0, 0, -0.01);
+		break;
+
+	case 97: //a
+		cameraPrincipal.translateGlob(-0.01,0, 0);
+		break;
+
+	case 100: //d
+		cameraPrincipal.translateGlob(0.01, 0, 0);
 		break;
 
 	case 44://,
@@ -417,6 +419,10 @@ void selectNext()
 	}
 }
 
+void mouseMotion(int x, int y){
+
+}
+
 int main(int argc, char* argv[]){
 
 	LoadModels();
@@ -434,7 +440,6 @@ int main(int argc, char* argv[]){
 	// Callback functions
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
-	glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(handleKeypress);
 
 	//  Pass control to GLUT for events
