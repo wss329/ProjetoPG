@@ -26,6 +26,10 @@ Light L1 = Light();
 Light L2 = Light();
 int lightIndex = 0;
 bool lightSelected = 0;
+double mousepos_x = 0;
+double mousepos_y = 0;
+GLfloat wWidth = 1366.0;
+GLfloat wHeight = 768.0;
 
 // -------------Global Vars End ------------
 
@@ -33,13 +37,6 @@ void display(){
 
 	//  Clear screen and Z-buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//cameraPrincipal.setView();
-	//glMatrixMode(GL_PROJECTION);
-	//glViewport(wWidth / 20, 0, wWidth - wWidth / 20, wHeight);
-	//glLoadIdentity();
-	//gluPerspective(45, wWidth / (wHeight), 0.1f, 3000.0f);
-
 
 	// ------------------------- Temp----------------------------------------
 	// Reset transformations
@@ -50,7 +47,16 @@ void display(){
 	glScalef(0.2, 0.2, 0.2);
 	// ------------------------- Temp----------------------------------------
 
+	//--------------------------Camera Setup --------------------------------
+	glMatrixMode(GL_PROJECTION);
+	glViewport(0, 0, wWidth / 2, wHeight);
+	glLoadIdentity();
+	gluPerspective(45, wWidth / (wHeight * 2), 0.1f, 3000.0f);
+	cameraPrincipal.setView();
+	//-----------------------------------------------------------------------
+	
 	DisplayLights();
+
 	for (size_t i = 0; i < objs.size(); i++)
 	{
 		objs[i].DrawModel();
@@ -59,7 +65,7 @@ void display(){
 
 	glFlush();
 	glutSwapBuffers();
-
+	glutPostRedisplay();
 }
 
 void DisplayLights()
@@ -184,6 +190,23 @@ void handleKeypress(unsigned char key, int x, int y)
 
 	case 27: // ESC
 		exit(0);
+		break;
+
+	//Camera movement
+	case 119: //w
+		cameraPrincipal.translateGlob(0, 0, 0.01);
+		break;
+
+	case 115: //s
+		cameraPrincipal.translateGlob(0, 0, -0.01);
+		break;
+
+	case 97: //a
+		cameraPrincipal.translateGlob(-0.01,0, 0);
+		break;
+
+	case 100: //d
+		cameraPrincipal.translateGlob(0.01, 0, 0);
 		break;
 
 	case 44://,
@@ -327,6 +350,10 @@ void selectNext()
 			}
 		}
 	}
+}
+
+void mouseMotion(int x, int y){
+
 }
 
 int main(int argc, char* argv[]){
