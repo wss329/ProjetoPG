@@ -54,6 +54,7 @@ void Camera::rotateGlob(float deg, float x, float y, float z){
 	//rotacionando
 	rotateLoc(deg, dx, dy, dz);
 }
+
 void Camera::setView() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

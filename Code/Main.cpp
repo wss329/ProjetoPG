@@ -27,6 +27,8 @@ int lightIndex = 0;
 bool lightSelected = 0;
 double mousepos_x = 0;
 double mousepos_y = 0;
+bool click = false;
+bool mouse_right = false;
 GLfloat wWidth = 1366.0;
 GLfloat wHeight = 768.0;
 
@@ -213,7 +215,15 @@ void handleKeypress(unsigned char key, int x, int y)
 		if (!lightSelected)
 			objs[modelIndex].scale += 0.01;
 		break;
+	case 61://=
+		if (!lightSelected)
+			objs[modelIndex].scale += 0.01;
+		break;
 	case 45://-
+		if (!lightSelected)
+			objs[modelIndex].scale -= 0.01;
+		break;
+	case 95://_
 		if (!lightSelected)
 			objs[modelIndex].scale -= 0.01;
 		break;
@@ -418,8 +428,30 @@ void selectNext()
 	}
 }
 
-void mouseMotion(int x, int y){
+void mouseClickFunction(int btn, int state, int x, int y){
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+		if (!click){
+			click = true;
+			mousepos_x = x;
+			mousepos_y = y;
+		}
+	}
+	else if (btn == GLUT_LEFT_BUTTON && state == GLUT_UP){
+		if (click){
+			click = false;
+		}
+	}
+}
 
+void mouseMotion(int x, int y){
+	if (!mouse_right){
+		if (click){
+			cameraPrincipal.rotateGlob((x - mousepos_x)*0.2, 0, 1, 0);
+			cameraPrincipal.rotateGlob((y - mousepos_y)*0.2, 1, 0, 0);
+		}
+		mousepos_x = x;
+		mousepos_y = y;
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -440,6 +472,9 @@ int main(int argc, char* argv[]){
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
 	glutKeyboardFunc(handleKeypress);
+
+	glutMotionFunc(mouseMotion);
+	glutMouseFunc(mouseClickFunction);
 
 	//  Pass control to GLUT for events
 	glutMainLoop();
