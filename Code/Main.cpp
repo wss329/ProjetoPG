@@ -28,6 +28,8 @@ int lightIndex = 0;
 bool lightSelected = 0;
 double mousepos_x = 0;
 double mousepos_y = 0;
+bool click = false;
+bool mouse_right = false;
 GLfloat wWidth = 1366.0;
 GLfloat wHeight = 768.0;
 
@@ -352,8 +354,30 @@ void selectNext()
 	}
 }
 
-void mouseMotion(int x, int y){
+void mouseClickFunction(int btn, int state, int x, int y){
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+		if (!click){
+			click = true;
+			mousepos_x = x;
+			mousepos_y = y;
+		}
+	}
+	else if (btn == GLUT_LEFT_BUTTON && state == GLUT_UP){
+		if (click){
+			click = false;
+		}
+	}
+}
 
+void mouseMotion(int x, int y){
+	if (!mouse_right){
+		if (click){
+			cameraPrincipal.rotateGlob((x - mousepos_x)*0.2, 0, 1, 0);
+			cameraPrincipal.rotateGlob((y - mousepos_y)*0.2, 1, 0, 0);
+		}
+		mousepos_x = x;
+		mousepos_y = y;
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -374,6 +398,9 @@ int main(int argc, char* argv[]){
 	glutDisplayFunc(display);
 	glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(handleKeypress);
+
+	glutMotionFunc(mouseMotion);
+	glutMouseFunc(mouseClickFunction);
 
 	//  Pass control to GLUT for events
 	glutMainLoop();
