@@ -5,7 +5,6 @@
 #include "Camera.h"
 
 
-
 using namespace std;
 
 struct Vector
@@ -53,4 +52,5 @@ public:
 	Vector getNormal(Vector p1, Vector p2, Vector p3);
 	void DrawModel();
 	void calcularNormal();
+	void rotate();
 };
