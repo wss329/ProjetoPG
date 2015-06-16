@@ -33,21 +33,23 @@ bool mouse_right = false;
 GLfloat wWidth = 1366.0;
 GLfloat wHeight = 768.0;
 
+void idle(void);
+int frameCount = 0;
+float fps = 0;
+int currentTime = 0, previousTime = 0;
+void calculateFPS();
+void drawFPS();
+void printw(float x, float y, float z, char* format, ...);
+GLvoid *font_style = GLUT_BITMAP_TIMES_ROMAN_24;
+
+
 // -------------Global Vars End ------------
 
 void display(){
 
 	//  Clear screen and Z-buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// ------------------------- Temp----------------------------------------
-	// Reset transformations
-	glLoadIdentity();
-	// Rotate when user changes rotate_x and rotate_y
-	glRotatef(tempRotate_x, 1.0, 0.0, 0.0);
-	glRotatef(tempRotate_y, 0.0, 1.0, 0.0);
-	glScalef(0.2, 0.2, 0.2);
-	// ------------------------- Temp----------------------------------------
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//--------------------------Camera Setup --------------------------------
 	glMatrixMode(GL_PROJECTION);
@@ -58,16 +60,26 @@ void display(){
 	//-----------------------------------------------------------------------
 	
 	DisplayLights();
-
 	for (size_t i = 0; i < objs.size(); i++)
 	{
 		objs[i].DrawModel();
 	}
-	drawGrid();
+	//drawGrid();
+	drawFPS();
 
 	glFlush();
 	glutSwapBuffers();
 	glutPostRedisplay();
+}
+
+void drawFPS()
+{
+	//  Load the identity matrix so that FPS string being drawn
+	//  won't get animates
+	glLoadIdentity();
+
+	//  Print the FPS to the window
+	printw(-0.9, -0.9, 0, "FPS: %4.2f", fps);
 }
 
 void DisplayLights()
@@ -97,6 +109,83 @@ void LoadModels()
 	objs.push_back(m);
 }
 
+void printw(float x, float y, float z, char* format, ...)
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	va_list args;	//  Variable argument list
+	int len;		//	String length
+	int i;			//  Iterator
+	char * text;	//	Text
+
+	//  Initialize a variable argument list
+	va_start(args, format);
+
+	//  Return the number of characters in the string referenced the list of arguments.
+	//  _vscprintf doesn't count terminating '\0' (that's why +1)
+	len = _vscprintf(format, args) + 1;
+
+	//  Allocate memory for a string of the specified size
+	text = (char *)malloc(len * sizeof(char));
+
+	//  Write formatted output using a pointer to the list of arguments
+	vsprintf_s(text, len, format, args);
+
+	//  End using variable argument list 
+	va_end(args);
+	//  Specify the raster position for pixel operations.,
+	glRasterPos3f(x, y, z);
+	//  Draw the characters one by one
+	for (i = 0; text[i] != '\0'; i++)
+		glutBitmapCharacter(font_style, text[i]);
+	//  Free the allocated memory for the string
+	free(text);
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}	
+
+
+void calculateFPS()
+{
+	//  Increase frame count
+	frameCount++;
+
+	//  Get the number of milliseconds since glutInit called 
+	//  (or first call to glutGet(GLUT ELAPSED TIME)).
+	currentTime = glutGet(GLUT_ELAPSED_TIME);
+
+	//  Calculate time passed
+	int timeInterval = currentTime - previousTime;
+
+	if (timeInterval > 1000)
+	{
+		//  calculate the number of frames per second
+		fps = frameCount / (timeInterval / 1000.0f);
+
+		//  Set time
+		previousTime = currentTime;
+
+		//  Reset frame count
+		frameCount = 0;
+	}
+}
+
+
+void idle(void)
+{
+	//  Calculate FPS
+	calculateFPS();
+
+	//  Call display function (draw the current frame)
+	glutPostRedisplay();
+}
+
 void drawGrid() // Draws a grid...
 {
 	glPushMatrix();
@@ -117,27 +206,6 @@ void drawGrid() // Draws a grid...
 	glEnd();
 
 	glPopMatrix();
-}
-
-void specialKeys(int key, int x, int y) {
-
-	//  Right arrow - increase rotation by 5 degree
-	if (key == GLUT_KEY_RIGHT)
-		tempRotate_y += 5;
-
-	//  Left arrow - decrease rotation by 5 degree
-	else if (key == GLUT_KEY_LEFT)
-		tempRotate_y -= 5;
-
-	else if (key == GLUT_KEY_UP)
-		tempRotate_x += 5;
-
-	else if (key == GLUT_KEY_DOWN)
-		tempRotate_x -= 5;
-
-	//  Request display update
-	glutPostRedisplay();
-
 }
 
 void handleKeypress(unsigned char key, int x, int y)
@@ -194,7 +262,6 @@ void handleKeypress(unsigned char key, int x, int y)
 		exit(0);
 		break;
 
-	//Camera movement
 	case 119: //w
 		cameraPrincipal.translateGlob(0, 0, 0.01);
 		break;
@@ -396,7 +463,7 @@ int main(int argc, char* argv[]){
 
 	// Callback functions
 	glutDisplayFunc(display);
-	glutSpecialFunc(specialKeys);
+	glutIdleFunc(idle);
 	glutKeyboardFunc(handleKeypress);
 
 	glutMotionFunc(mouseMotion);

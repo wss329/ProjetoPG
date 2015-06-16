@@ -160,13 +160,12 @@ void Model::DrawModel()
 	{
 		for (size_t i = 0; i < faces.size(); i++)
 		{
-			Face face = faces[i];
 			Vector n = normais[i];
 			glNormal3f(n.x, n.y, n.z);
 			glBegin(GL_POLYGON);
-			for (size_t t = 0; t < face.vertices.size(); t++)
+			for (size_t t = 0; t < faces[i].vertices.size(); t++)
 			{
-				Vector v = vertices[face.vertices[t] - 1];
+				Vector v = vertices[faces[i].vertices[t] - 1];
 				glVertex3f(v.x, v.y, v.z);
 			}
 			glEnd();
@@ -177,16 +176,16 @@ void Model::DrawModel()
 	{
 		for (size_t i = 0; i < faces.size(); i++)
 		{
-			Face face = faces[i];
 			glBegin(GL_POLYGON);
 
-			for (size_t t = 0; t < face.normais.size(); t++)
+			for (size_t t = 0; t < faces[i].normais.size(); t++)
 			{
-				Vector n = normais[face.normais[t] - 1];
+				Vector n = normais[faces[i].normais[t] - 1];
 				glNormal3f(n.x, n.y, n.z);
-				Vector v = vertices[face.vertices[t] - 1];
+				Vector v = vertices[faces[i].vertices[t] - 1];
 				glVertex3f(v.x, v.y, v.z);
 			}
+
 			//for (size_t t = 0; t < face.vertices.size(); t++)
 			//{
 			//	Vector v = vertices[face.vertices[t] - 1];
