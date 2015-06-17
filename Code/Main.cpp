@@ -63,7 +63,7 @@ void display(){
 	{
 		objs[i].DrawModel();
 	}
-	//drawGrid();
+	drawGrid();
 	drawFPS();
 
 	glFlush();
@@ -488,7 +488,7 @@ int main(int argc, char* argv[]){
 
 	//  Pass control to GLUT for events
 	glutMainLoop();
-
+	
 	//  Return to OS
 	return 0;
 }
