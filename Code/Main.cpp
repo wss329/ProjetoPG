@@ -11,7 +11,6 @@ void DisplayLights();
 void loadModels();
 void display();
 void specialKeys();
-void drawRetangle();
 void drawGrid();
 void selectNext();
 void selectLast();
@@ -93,7 +92,7 @@ void DisplayLights()
 	
 	glPushMatrix();
 	GLfloat position2[] = { L2.pontos.x+ 5, L2.pontos.y, L2.pontos.z - 1, 1.0 };
-	GLfloat color[] = { 0.89, 0, 0.87 };
+	GLfloat color[] = { 0.05, 0.98, 0.56 };
 	glLightfv(GL_LIGHT1, GL_POSITION, position2);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, color);
 	glEnable(GL_LIGHTING);
@@ -134,10 +133,11 @@ void printw(float x, float y, float z, char* format, ...)
 
 	//  Write formatted output using a pointer to the list of arguments
 	vsprintf_s(text, len, format, args);
-
 	//  End using variable argument list 
 	va_end(args);
 	//  Specify the raster position for pixel operations.,
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0,1.0,1.0);
 	glRasterPos3f(x, y, z);
 	//  Draw the characters one by one
 	for (i = 0; text[i] != '\0'; i++)
@@ -179,10 +179,7 @@ void calculateFPS()
 
 void idle(void)
 {
-	//  Calculate FPS
 	calculateFPS();
-
-	//  Call display function (draw the current frame)
 	glutPostRedisplay();
 }
 
@@ -214,11 +211,19 @@ void handleKeypress(unsigned char key, int x, int y)
 		//translateQtd
 	case 43://+
 		if (!lightSelected)
-			objs[modelIndex].scale += 0.01;
+			objs[modelIndex].scale += 0.001;
+		break;
+	case 61://=
+		if (!lightSelected)
+			objs[modelIndex].scale += 0.001;
 		break;
 	case 45://-
-		if (!lightSelected)
-			objs[modelIndex].scale -= 0.01;
+		if (!lightSelected && objs[modelIndex].scale>0)
+			objs[modelIndex].scale -= 0.001;
+		break;
+	case 95://_
+		if (!lightSelected && objs[modelIndex].scale>0)
+			objs[modelIndex].scale -= 0.001;
 		break;
 	case 49://1
 		translateModel(0, -translateQtd);
@@ -300,7 +305,7 @@ void handleKeypress(unsigned char key, int x, int y)
 void translateModel(int selector, double deslocamento)
 {
 	//select: x = 0; y = 1 ; z=2;
-	const double translateLightBoost = 1;
+	const double translateLightBoost = 0.10;
 	if (selector == 0)
 	{
 		if (!lightSelected)
