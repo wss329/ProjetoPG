@@ -52,7 +52,7 @@ void display(){
 
 	//--------------------------Camera Setup --------------------------------
 	glMatrixMode(GL_PROJECTION);
-	glViewport(0, 0, wWidth / 2, wHeight);
+	glViewport(0, 0, wWidth , wHeight);
 	glLoadIdentity();
 	gluPerspective(45, wWidth / (wHeight * 2), 0.1f, 3000.0f);
 	cameraPrincipal.setView();
@@ -302,6 +302,18 @@ void handleKeypress(unsigned char key, int x, int y)
 		glutPostRedisplay();
 }
 
+void myreshape(GLsizei w, GLsizei h) // Called at startup and when you move the window
+{
+	glMatrixMode(GL_PROJECTION);
+	wWidth = w;
+	wHeight = h;
+	double g_Width = wWidth;
+	double g_Height = wHeight;
+	glViewport(0, 0, g_Width, g_Height);
+	glLoadIdentity();
+	gluPerspective(45, g_Width / g_Height, 0.1f, 500.0f);
+}
+
 void translateModel(int selector, double deslocamento)
 {
 	//select: x = 0; y = 1 ; z=2;
@@ -470,7 +482,7 @@ int main(int argc, char* argv[]){
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
 	glutKeyboardFunc(handleKeypress);
-
+	glutReshapeFunc(myreshape);
 	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseClickFunction);
 
