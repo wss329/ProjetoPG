@@ -84,12 +84,12 @@ void drawFPS()
 
 void DisplayLights()
 {
-	glPushMatrix();
+	/*glPushMatrix();
 	GLfloat position[] = { L1.pontos.x, L1.pontos.y, L1.pontos.z - 1, 1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glPopMatrix();
+	glPopMatrix();*/
 	
 	glPushMatrix();
 	GLfloat position2[] = { L2.pontos.x+ 5, L2.pontos.y, L2.pontos.z - 1, 1.0 };
@@ -263,19 +263,19 @@ void handleKeypress(unsigned char key, int x, int y)
 		break;
 
 	case 119: //w
-		cameraPrincipal.translateGlob(0, 0, 0.01);
+		cameraPrincipal.translateLoc(0, 0, 0.01);
 		break;
 
 	case 115: //s
-		cameraPrincipal.translateGlob(0, 0, -0.01);
+		cameraPrincipal.translateLoc(0, 0, -0.01);
 		break;
 
 	case 97: //a
-		cameraPrincipal.translateGlob(-0.01,0, 0);
+		cameraPrincipal.translateLoc(-0.01,0, 0);
 		break;
 
 	case 100: //d
-		cameraPrincipal.translateGlob(0.01, 0, 0);
+		cameraPrincipal.translateLoc(0.01, 0, 0);
 		break;
 
 	case 44://,
@@ -439,8 +439,8 @@ void mouseClickFunction(int btn, int state, int x, int y){
 void mouseMotion(int x, int y){
 	if (!mouse_right){
 		if (click){
-			cameraPrincipal.rotateGlob((x - mousepos_x)*0.2, 0, 1, 0);
-			cameraPrincipal.rotateGlob((y - mousepos_y)*0.2, 1, 0, 0);
+			cameraPrincipal.rotateLoc((x - mousepos_x)*0.2, 0, 1, 0);
+			cameraPrincipal.rotateLoc((y - mousepos_y)*0.2, 1, 0, 0);
 		}
 		mousepos_x = x;
 		mousepos_y = y;

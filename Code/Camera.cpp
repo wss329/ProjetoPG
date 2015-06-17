@@ -32,9 +32,6 @@ void Camera::translateGlob(float x, float y, float z) {
 }
 
 void Camera::rotateLoc(float deg, float x, float y, float z) {
-	degree1 = x;
-	degree2 = y;
-	degree3 = z;
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(extParameters);
@@ -43,16 +40,16 @@ void Camera::rotateLoc(float deg, float x, float y, float z) {
 	glPopMatrix();
 }
 
-void Camera::rotateGlob(float deg, float x, float y, float z){
-	//convertendo pra global
+void Camera::rotateGlob(float deg, float x, float y, float z) {
 	float dx = x*extParameters[0] + y*extParameters[1] + z*extParameters[2];
 	float dy = x*extParameters[4] + y*extParameters[5] + z*extParameters[6];
 	float dz = x*extParameters[8] + y*extParameters[9] + z*extParameters[10];
-	degree1 = dx;
-	degree2 = dy;
-	degree3 = dz;
-	//rotacionando
-	rotateLoc(deg, dx, dy, dz);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(extParameters);
+	glRotatef(deg, dx, dy, dz);
+	glGetFloatv(GL_MODELVIEW_MATRIX, extParameters);
+	glPopMatrix();
 }
 
 void Camera::setView() {
