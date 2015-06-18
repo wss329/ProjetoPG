@@ -52,12 +52,12 @@ void display(){
 
 	//--------------------------Camera Setup --------------------------------
 	glMatrixMode(GL_PROJECTION);
-	glViewport(0, 0, wWidth , wHeight);
+	glViewport(0, 0, wWidth, wHeight);
 	glLoadIdentity();
 	gluPerspective(45, wWidth / (wHeight * 2), 0.1f, 3000.0f);
 	cameraPrincipal.setView();
 	//-----------------------------------------------------------------------
-	
+
 	DisplayLights();
 	for (size_t i = 0; i < objs.size(); i++)
 	{
@@ -73,11 +73,8 @@ void display(){
 
 void drawFPS()
 {
-	//  Load the identity matrix so that FPS string being drawn
-	//  won't get animates
 	glLoadIdentity();
 
-	//  Print the FPS to the window
 	printw(-0.9, -0.9, 0, "FPS: %4.2f", fps);
 }
 
@@ -89,9 +86,9 @@ void DisplayLights()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glPopMatrix();
-	
+
 	glPushMatrix();
-	GLfloat position2[] = { L2.pontos.x+ 5, L2.pontos.y, L2.pontos.z - 1, 1.0 };
+	GLfloat position2[] = { L2.pontos.x + 5, L2.pontos.y, L2.pontos.z - 1, 1.0 };
 	GLfloat color[] = { 0.05, 0.98, 0.56 };
 	glLightfv(GL_LIGHT1, GL_POSITION, position2);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, color);
@@ -102,10 +99,20 @@ void DisplayLights()
 
 void LoadModels()
 {
-	//m = Model("Resources/Triangles/venus.obj");
-	//objs.push_back(m);
-	Model m = Model("Resources/PolygonsWithNormals/camel.obj");
+	Model m = Model("Resources/Triangles/venus.obj");
 	objs.push_back(m);
+
+	m = Model("Resources/PolygonsWithNormals/camel.obj");
+	objs.push_back(m);
+
+	m = Model("Resources/PolygonsWithNormals/camera.obj");
+	objs.push_back(m);
+
+	for (double i = 0; i < objs.size(); i++)
+	{
+		if (i != 0)
+			objs[i].translate_x = i / 5;
+	}
 }
 
 void printw(float x, float y, float z, char* format, ...)
@@ -116,62 +123,43 @@ void printw(float x, float y, float z, char* format, ...)
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	va_list args;	//  Variable argument list
-	int len;		//	String length
-	int i;			//  Iterator
-	char * text;	//	Text
+	va_list args;
+	int len;
+	int i;
+	char * text;
 
-	//  Initialize a variable argument list
 	va_start(args, format);
 
-	//  Return the number of characters in the string referenced the list of arguments.
-	//  _vscprintf doesn't count terminating '\0' (that's why +1)
 	len = _vscprintf(format, args) + 1;
-
-	//  Allocate memory for a string of the specified size
 	text = (char *)malloc(len * sizeof(char));
-
-	//  Write formatted output using a pointer to the list of arguments
 	vsprintf_s(text, len, format, args);
-	//  End using variable argument list 
 	va_end(args);
-	//  Specify the raster position for pixel operations.,
+
 	glDisable(GL_LIGHTING);
-	glColor3f(1.0,1.0,1.0);
+	glColor3f(1.0, 1.0, 1.0);
 	glRasterPos3f(x, y, z);
-	//  Draw the characters one by one
 	for (i = 0; text[i] != '\0'; i++)
 		glutBitmapCharacter(font_style, text[i]);
-	//  Free the allocated memory for the string
 	free(text);
+
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
+
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-}	
+}
 
 
 void calculateFPS()
 {
-	//  Increase frame count
 	frameCount++;
-
-	//  Get the number of milliseconds since glutInit called 
-	//  (or first call to glutGet(GLUT ELAPSED TIME)).
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
-
-	//  Calculate time passed
 	int timeInterval = currentTime - previousTime;
 
 	if (timeInterval > 1000)
 	{
-		//  calculate the number of frames per second
 		fps = frameCount / (timeInterval / 1000.0f);
-
-		//  Set time
 		previousTime = currentTime;
-
-		//  Reset frame count
 		frameCount = 0;
 	}
 }
@@ -182,27 +170,27 @@ void idle(void)
 	calculateFPS();
 	glutPostRedisplay();
 }
-	
-// Red = Z , x = Blue
-void drawGrid() 
+
+// Red = Z , x = Blue, Y = Green
+void drawGrid()
 {
 	glPushMatrix();
-	glTranslatef(-0.5,-0.2,0);
+	glTranslatef(-0.5, -0.2, 0);
 	glDisable(GL_LIGHTING);
 	glColor3f(.3, .3, .3);
 	glBegin(GL_LINES);
-	for (double i = 0; i <= 1; i = i+ 0.1)
+	for (double i = 0; i <= 1; i = i + 0.1)
 	{
 		if (i == 0) { glColor3f(.6, .3, .3); }
 		else { glColor3f(.25, .25, .25); };
 		glVertex3f(i, 0, 0);
 		glVertex3f(i, 0, 1);
-		
+
 		if (i == 0) { glColor3f(.3, .3, .6); }
 		else { glColor3f(.25, .25, .25); };
 		glVertex3f(0, 0, i);
 		glVertex3f(1, 0, i);
-		
+
 	};
 
 	for (double i = 0; i <= 1; i = i + 0.1)
@@ -225,7 +213,6 @@ void drawGrid()
 void handleKeypress(unsigned char key, int x, int y)
 {
 	switch (key){
-		//translateQtd
 	case 43://+
 		if (!lightSelected)
 			objs[modelIndex].scale += 0.001;
@@ -293,7 +280,7 @@ void handleKeypress(unsigned char key, int x, int y)
 		break;
 
 	case 97: //a
-		cameraPrincipal.translateLoc(-0.01,0, 0);
+		cameraPrincipal.translateLoc(-0.01, 0, 0);
 		break;
 
 	case 100: //d
@@ -316,10 +303,10 @@ void handleKeypress(unsigned char key, int x, int y)
 		selectNext();
 		break;
 	}
-		glutPostRedisplay();
+	glutPostRedisplay();
 }
 
-void myreshape(GLsizei w, GLsizei h) // Called at startup and when you move the window
+void myreshape(GLsizei w, GLsizei h)
 {
 	glMatrixMode(GL_PROJECTION);
 	wWidth = w;
@@ -331,9 +318,9 @@ void myreshape(GLsizei w, GLsizei h) // Called at startup and when you move the 
 	gluPerspective(45, g_Width / g_Height, 0.1f, 500.0f);
 }
 
+//select: x = 0; y = 1 ; z=2;
 void translateModel(int selector, double deslocamento)
 {
-	//select: x = 0; y = 1 ; z=2;
 	const double translateLightBoost = 0.10;
 	if (selector == 0)
 	{
@@ -344,10 +331,10 @@ void translateModel(int selector, double deslocamento)
 		else{
 			if (lightIndex == 0)
 			{
-				L1.translate(deslocamento +translateLightBoost, 0, 0);
+				L1.translate(deslocamento + translateLightBoost, 0, 0);
 			}
 			else{
-				L2.translate(deslocamento +translateLightBoost, 0, 0);
+				L2.translate(deslocamento + translateLightBoost, 0, 0);
 			}
 		}
 
@@ -367,7 +354,7 @@ void translateModel(int selector, double deslocamento)
 			}
 		}
 	}
-	else if(selector == 2){
+	else if (selector == 2){
 		if (!lightSelected)
 		{
 			objs[modelIndex].translate_z += deslocamento;
@@ -422,7 +409,7 @@ void selectLast()
 
 void selectNext()
 {
-	if (modelIndex < objs.size()-1 && !lightSelected)
+	if (modelIndex < objs.size() - 1 && !lightSelected)
 	{
 		modelIndex = modelIndex + 1;
 		printf("Selected: %s %d \n", objs[modelIndex].nome.c_str(), modelIndex);
@@ -486,16 +473,12 @@ int main(int argc, char* argv[]){
 	LoadModels();
 	glutInit(&argc, argv);
 
-	//  Request double buffered true color window with Z-buffer
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(800 , 800);
-	// Create window
+	glutInitWindowSize(wWidth, wHeight);
 	glutCreateWindow("Projeto PG");
 
-	//  Enable Z-buffer depth test
 	glEnable(GL_DEPTH_TEST);
 
-	// Callback functions
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
 	glutKeyboardFunc(handleKeypress);
@@ -503,9 +486,7 @@ int main(int argc, char* argv[]){
 	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseClickFunction);
 
-	//  Pass control to GLUT for events
 	glutMainLoop();
-	
-	//  Return to OS
+
 	return 0;
 }
