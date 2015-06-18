@@ -83,12 +83,12 @@ void drawFPS()
 
 void DisplayLights()
 {
-	/*glPushMatrix();
+	glPushMatrix();
 	GLfloat position[] = { L1.pontos.x, L1.pontos.y, L1.pontos.z - 1, 1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glPopMatrix();*/
+	glPopMatrix();
 	
 	glPushMatrix();
 	GLfloat position2[] = { L2.pontos.x+ 5, L2.pontos.y, L2.pontos.z - 1, 1.0 };
@@ -182,26 +182,43 @@ void idle(void)
 	calculateFPS();
 	glutPostRedisplay();
 }
-
-void drawGrid() // Draws a grid...
+	
+// Red = Z , x = Blue
+void drawGrid() 
 {
 	glPushMatrix();
+	glTranslatef(-0.5,-0.2,0);
+	glDisable(GL_LIGHTING);
 	glColor3f(.3, .3, .3);
 	glBegin(GL_LINES);
-	for (int i = 0; i <= 10; i++)
+	for (double i = 0; i <= 1; i = i+ 0.1)
 	{
 		if (i == 0) { glColor3f(.6, .3, .3); }
 		else { glColor3f(.25, .25, .25); };
 		glVertex3f(i, 0, 0);
-		glVertex3f(i, 0, 10);
+		glVertex3f(i, 0, 1);
+		
 		if (i == 0) { glColor3f(.3, .3, .6); }
 		else { glColor3f(.25, .25, .25); };
 		glVertex3f(0, 0, i);
-		glVertex3f(10, 0, i);
+		glVertex3f(1, 0, i);
+		
+	};
+
+	for (double i = 0; i <= 1; i = i + 0.1)
+	{
+		glColor3f(.25, .25, .25);
+		glVertex3f(0, i, 1);
+		glVertex3f(1, i, 1);
+
+		if (i == 0) { glColor3f(.3, .6, .3); }
+		else { glColor3f(.25, .25, .25); };
+		glVertex3f(i, 0, 1);
+		glVertex3f(i, 1, 1);
+
 	};
 
 	glEnd();
-
 	glPopMatrix();
 }
 
