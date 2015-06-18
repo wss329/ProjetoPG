@@ -21,9 +21,6 @@ Model::Model(const char* path)
 
 void Model::LoadObj(const char* path)
 {
-	//nome = path.substring() pegar o nome do obj
-	//No main ao selecionar um modelo imprimir seu nome com a posição do vector 
-	//em que ele ta no main
 	FILE * file = fopen(path, "r");
 
 	while (true)
@@ -63,8 +60,6 @@ void Model::LoadObj(const char* path)
 		}
 		else if (strcmp(line, "f") == 0)
 		{
-			//procurar saber como determinar fim da linha com fscan e também o esquema de
-			//2 vectors para cada escrito no tutorial
 			int vert, text, norm;
 			if (!hasTexture && !hasNormal)
 			{
@@ -87,7 +82,7 @@ void Model::LoadObj(const char* path)
 				while (i>=1){
 					if (i == EOF)
 						break;
-					i = fscanf(file, "%i/%i/", &vert, &text);
+					i = fscanf(file, "%i/%i", &vert, &text);
 					if (i != 0)
 					{
 					novaface.vertices.push_back(vert);
