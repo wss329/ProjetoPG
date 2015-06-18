@@ -32,15 +32,77 @@ void Camera::translateGlob(float x, float y, float z) {
 }
 
 void Camera::rotateLoc(float deg, float x, float y, float z) {
+	
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(extParameters);
 	glRotatef(deg, x, y, z);
 	glGetFloatv(GL_MODELVIEW_MATRIX, extParameters);
 	glPopMatrix();
+
+	//glMatrixMode(GL_MODELVIEW);
+	//
+	//// where the magic begins
+	//deg /= 57.2957795f;
+
+	//// x axis rotation
+
+	//GLfloat x_x = x;
+	//GLfloat y_x = (y * cos(deg)) + (-sin(deg)*z);
+	//GLfloat z_x = (y * sin(deg)) + (cos(deg)*z);
+
+	//GLfloat x_rotatedMatrix[16];
+	//
+	//memset(x_rotatedMatrix, 0, 16);
+
+	//x_rotatedMatrix[0] = x_x;
+	//x_rotatedMatrix[5] = y_x;
+	//x_rotatedMatrix[10] = z_x;
+	//x_rotatedMatrix[15] = 1;
+
+	//// y axis rotation
+
+	//GLfloat x_y = (x * cos(deg)) + (z * sin(deg));
+	//GLfloat y_y = y;
+	//GLfloat z_y = (-x * sin(deg)) + (z * cos(deg));
+
+	//GLfloat y_rotatedMatrix[16];
+
+	//memset(y_rotatedMatrix, 0, 16);
+
+	//y_rotatedMatrix[0] = x_y;
+	//y_rotatedMatrix[5] = y_y;
+	//y_rotatedMatrix[10] = z_y;
+	//y_rotatedMatrix[15] = 1;
+	//
+	//// z axis rotation
+
+	//GLfloat x_z = (cos(deg)*x) + (-sin(deg)*y);
+	//GLfloat y_z = (sin(deg)*x) + (cos(deg)*y);
+	//GLfloat z_z = z;
+
+	//GLfloat z_rotatedMatrix[16];
+
+	//memset(z_rotatedMatrix, 0, 16);
+
+	//z_rotatedMatrix[0] = x_z;
+	//z_rotatedMatrix[5] = y_z;
+	//z_rotatedMatrix[10] = z_z;
+	//z_rotatedMatrix[15] = 1;
+
+	//glPushMatrix();
+	//glLoadMatrixf(x_rotatedMatrix);
+
+	//glMultMatrixf(y_rotatedMatrix);
+	//glMultMatrixf(z_rotatedMatrix);
+
+	//glGetFloatv(GL_MODELVIEW_MATRIX, extParameters);
+	//glPopMatrix();
+	//
 }
 
 void Camera::rotateGlob(float deg, float x, float y, float z) {
+
 	float dx = x*extParameters[0] + y*extParameters[1] + z*extParameters[2];
 	float dy = x*extParameters[4] + y*extParameters[5] + z*extParameters[6];
 	float dz = x*extParameters[8] + y*extParameters[9] + z*extParameters[10];

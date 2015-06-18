@@ -474,7 +474,7 @@ void mouseMotion(int x, int y){
 	if (!mouse_right){
 		if (click){
 			cameraPrincipal.rotateLoc((x - mousepos_x)*0.2, 0, 1, 0);
-			cameraPrincipal.rotateLoc((y - mousepos_y)*0.2, 1, 0, 0);
+			cameraPrincipal.rotateGlob((y - mousepos_y)*0.2, 1, 0, 0);
 		}
 		mousepos_x = x;
 		mousepos_y = y;
