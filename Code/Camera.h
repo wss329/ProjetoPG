@@ -19,6 +19,5 @@ public:
 	void do_x_rotation(float deg);
 	void do_y_rotation(float deg); 
 	void do_z_rotation(float deg);
-	GLfloat* createRodriguesMatrix(float x, float y, float z, GLfloat degree);
 };
 
