@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <vector>
 #include <math.h>
 #include <gl/glut.h>
@@ -13,10 +14,11 @@ public:
 	void setView();
 	void translateLoc(float x, float y, float z);
 	void translateGlob(float x, float y, float z);
-	void rotateLoc(float deg, float x, float y, float z);
+	void rotateLoc(GLfloat deg, float x, float y, float z);
 	void rotateGlob(float deg, float x, float y, float z);
 	void do_x_rotation(float deg);
 	void do_y_rotation(float deg); 
 	void do_z_rotation(float deg);
+	GLfloat* createRodriguesMatrix(float x, float y, float z, GLfloat degree);
 };
 

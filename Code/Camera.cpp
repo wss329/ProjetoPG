@@ -2,6 +2,7 @@
 
 int degree1, degree2, degree3;
 
+
 Camera::Camera()
 {
 	for (int i = 0; i < 16; i++){
@@ -31,74 +32,87 @@ void Camera::translateGlob(float x, float y, float z) {
 	extParameters[14] += z;
 }
 
-void Camera::rotateLoc(float deg, float x, float y, float z) {
+void Camera::rotateLoc(GLfloat deg, float x, float y, float z) {
 	
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
+	glLoadIdentity();
 	glLoadMatrixf(extParameters);
-	glRotatef(deg, x, y, z);
-	glGetFloatv(GL_MODELVIEW_MATRIX, extParameters);
-	glPopMatrix();
 
-	//glMatrixMode(GL_MODELVIEW);
+	//float tempx;
+	//float tempy;
+	//float tempz;
+
+	//tempx = extParameters[9] * z - extParameters[10] * y;
+	//tempy = extParameters[10] * x - extParameters[8] * z;
+	//tempz = extParameters[8] * y - extParameters[9] * x;
 	//
-	//// where the magic begins
-	//deg /= 57.2957795f;
+	//x = tempx;
+	//y = tempy;
+	//z = tempz;
 
-	//// x axis rotation
+	//x = -x;
 
-	//GLfloat x_x = x;
-	//GLfloat y_x = (y * cos(deg)) + (-sin(deg)*z);
-	//GLfloat z_x = (y * sin(deg)) + (cos(deg)*z);
+	y = -y;
 
-	//GLfloat x_rotatedMatrix[16];
-	//
-	//memset(x_rotatedMatrix, 0, 16);
+	const GLfloat ROTATE_NORMALIZER = 3.14159265358979323846 / 180;
+	GLfloat sinT = sin(deg * ROTATE_NORMALIZER);
+	GLfloat cosT = cos(deg * ROTATE_NORMALIZER);
 
-	//x_rotatedMatrix[0] = x_x;
-	//x_rotatedMatrix[5] = y_x;
-	//x_rotatedMatrix[10] = z_x;
-	//x_rotatedMatrix[15] = 1;
+	GLfloat* r = (GLfloat*)malloc(sizeof(GLfloat)* 16);
 
-	//// y axis rotation
+	r[0] = (cosT + (pow(x, 2) * (1 - cosT)));
+	r[1] = (x * y * (1 - cosT) - (z * sinT));
+	r[2] = (y * sinT) + (x * z * (1 - cosT));
+	r[3] = 0;
 
-	//GLfloat x_y = (x * cos(deg)) + (z * sin(deg));
-	//GLfloat y_y = y;
-	//GLfloat z_y = (-x * sin(deg)) + (z * cos(deg));
+	r[4] = ((z * sinT) + (x * y * (1 - cosT)));
+	r[5] = (cosT + (pow(y, 2) * (1 - cosT)));
+	r[6] = ((-x * sinT) + (y * z * (1 - cosT)));
+	r[7] = 0;
 
-	//GLfloat y_rotatedMatrix[16];
+	r[8] = ((-y * sinT) + (x * z * (1 - cosT)));
+	r[9] = ((x * sinT) + (y * z * (1 - cosT)));
+	r[10] = (cosT + (pow(z, 2) * (1 - cosT)));
+	r[11] = 0;
 
-	//memset(y_rotatedMatrix, 0, 16);
+	r[12] = 0;
+	r[13] = 0;
+	r[14] = 0;
+	r[15] = 1;
 
-	//y_rotatedMatrix[0] = x_y;
-	//y_rotatedMatrix[5] = y_y;
-	//y_rotatedMatrix[10] = z_y;
-	//y_rotatedMatrix[15] = 1;
-	//
-	//// z axis rotation
+	glMultMatrixf(r);
+	glGetFloatv(GL_MODELVIEW_MATRIX, extParameters); 
+}
 
-	//GLfloat x_z = (cos(deg)*x) + (-sin(deg)*y);
-	//GLfloat y_z = (sin(deg)*x) + (cos(deg)*y);
-	//GLfloat z_z = z;
+GLfloat* createRodriguesMatrix(float x, float y, float z, GLfloat degree)
+{
+	const GLfloat ROTATE_NORMALIZER = 3.14159265358979323846 / 180;
+	GLfloat sinT = sin(degree * ROTATE_NORMALIZER);
+	GLfloat cosT = cos(degree * ROTATE_NORMALIZER);
 
-	//GLfloat z_rotatedMatrix[16];
+	GLfloat* r = (GLfloat*)malloc(sizeof(GLfloat)* 16);
 
-	//memset(z_rotatedMatrix, 0, 16);
+	r[0] = cosT + (pow(x, 2) * (1 - cosT));
+	r[1] = (x * y * (1 - cosT) - (z * sinT));
+	r[2] = (y * sinT) + (x * z * (1 - cosT));
+	r[3] = 0;
 
-	//z_rotatedMatrix[0] = x_z;
-	//z_rotatedMatrix[5] = y_z;
-	//z_rotatedMatrix[10] = z_z;
-	//z_rotatedMatrix[15] = 1;
+	r[4] = (z * sinT) + (x * y * (1 - cosT));
+	r[5] = cosT + (pow(y, 2) * (1 - cosT));;
+	r[6] = (-x * sinT) + (y * z * (1 - cosT));
+	r[7] = 0;
 
-	//glPushMatrix();
-	//glLoadMatrixf(x_rotatedMatrix);
+	r[8] = (-y * sinT) + (x * z * (1 - cosT));
+	r[9] = (x * sinT) + (y * z * (1 - cosT));
+	r[10] = cosT + (pow(z, 2) * (1 - cosT));;;
+	r[11] = 0;
 
-	//glMultMatrixf(y_rotatedMatrix);
-	//glMultMatrixf(z_rotatedMatrix);
+	r[12] = 0;
+	r[13] = 0;
+	r[14] = 0;
+	r[15] = 1;
 
-	//glGetFloatv(GL_MODELVIEW_MATRIX, extParameters);
-	//glPopMatrix();
-	//
+	return r;
 }
 
 void Camera::rotateGlob(float deg, float x, float y, float z) {
